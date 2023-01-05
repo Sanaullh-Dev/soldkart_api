@@ -15,7 +15,7 @@ exports.chatRoomData = (req, res) => {
     });
   }
  
-  let query = `CALL chat_room_details("${body.userId}",${body.pId});`;
+  let query = `CALL chat_room_details('${body.userId}',${body.pId});`;
   
   // console.log(query);
   sql.query(query, (err, result) => {

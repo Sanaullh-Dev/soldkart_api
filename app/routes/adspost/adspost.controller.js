@@ -53,7 +53,7 @@ exports.recentAds = (req, res) => {
   if (!body.uid) {
     return res.status(503).send({ message: "user id not supplied" });
   } else {
-    let query = `CALL sp_recentAds("${body.uid}");`;
+    let query = `CALL sp_recentAds('${body.uid}');`;
 
     sql.query(query, (err, result) => {
       if (err) {
@@ -76,7 +76,7 @@ exports.getPostDetails = (req, res) => {
     return res.status(503).send({ message: "user id not supplied" });
   } else {
     // let query = "SELECT * FROM adspost order by p_date desc LIMIT 20";
-    let query = `CALL get_postDetail("${body.uid}" ,${body.pid});`;
+    let query = `CALL get_postDetail('${body.uid}' ,${body.pid});`;
     console.log(query);
     sql.query(query, (err, result) => {
       if (err) {
@@ -109,7 +109,7 @@ exports.relatedAds = (req, res) => {
     });
   }
 
-  let query = `CALL related_ads("${body.uid}" ,${body.mainId});`;
+  let query = `CALL related_ads('${body.uid}' ,${body.mainId});`;
 
   sql.query(query, (err, result) => {
     if (err) {
@@ -132,7 +132,7 @@ exports.getFavoriteList = (req, res) => {
     });
   }
 
-  let query = `CALL all_favoriteList("${body.uid}");`;
+  let query = `CALL all_favoriteList('${body.uid}');`;
 
   sql.query(query, (err, result) => {
     if (err) {
@@ -155,7 +155,7 @@ exports.getMySalesAds = (req, res) => {
     });
   }
 
-  let query = `CALL my_sellAds("${body.uid}");`;
+  let query = `CALL my_sellAds('${body.uid}');`;
 
   sql.query(query, (err, result) => {
     if (err) {
@@ -184,7 +184,7 @@ exports.deleteMySalesAds = (req, res) => {
     });
   }
 
-  let query = `DELETE FROM adspost WHERE p_id =${body.pid} AND p_uid="${body.uid}";`;
+  let query = `DELETE FROM adspost WHERE p_id =${body.pid} AND p_uid='${body.uid}';`;
 
   sql.query(query, (err, result) => {
     if (err) {
@@ -332,7 +332,7 @@ exports.userAction = (req, res, next) => {
   const body = req.body;
 
   sql.query(
-    `select * from post_reaction where uid = "${body.uid}" and pid="${body.pid}";`,
+    `select * from post_reaction where uid = '${body.uid}' and pid='${body.pid}';`,
     async (err, result) => {
       if (err) {
         return res.status(409).send({
@@ -418,7 +418,7 @@ exports.userProfileAds = (req, res) => {
   if (!body.uid && !body.uid_reaction) {
     return res.status(503).send({ message: "user id not supplied" });
   } else {
-    let query = `CALL sp_userAds("${body.uid}","${body.uid_reaction}");`;
+    let query = `CALL sp_userAds('${body.uid}','${body.uid_reaction}');`;
 
     sql.query(query, (err, result) => {
       if (err) {

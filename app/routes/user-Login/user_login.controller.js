@@ -48,7 +48,7 @@ exports.checkUser = (req, res, next) => {
   const loginId = body.uid;
   console.log(loginId);
   sql.query(
-    `select * from users where log_id="${loginId}";`,
+    `select * from users where log_id='${loginId}';`,
     async (err, result) => {
       if (err) {
         console.log(err);
@@ -96,7 +96,7 @@ exports.signUp = (req, res, next) => {
 
   console.log(loginId);
   sql.query(
-    `select * from users where u_phone = "${loginId}" or u_email="${loginId}";`,
+    `select * from users where u_phone = '${loginId}' or u_email='${loginId}';`,
     async (err, result) => {
       if (err) {
         return res.status(409).send({
@@ -168,7 +168,7 @@ exports.logIn = (req, res, next) => {
 
   const body = req.body;
 
-  let sqlQuery = `select log_pass,login_with from users where log_id="${body.loginId}"`;
+  let sqlQuery = `select log_pass,login_with from users where log_id='${body.loginId}'`;
 
   sql.query(sqlQuery, (err, result) => {
     if (err) {
