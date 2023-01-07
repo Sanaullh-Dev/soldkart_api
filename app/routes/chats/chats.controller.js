@@ -14,15 +14,16 @@ exports.chatRoomData = (req, res) => {
       message: "Missing userId or post Id",
     });
   }
- 
+
   let query = `CALL chat_room_details('${body.userId}',${body.pId});`;
-  
+
   // console.log(query);
   sql.query(query, (err, result) => {
     if (err) {
       // console.log("Error :" ,err);
       return res.status(500).send({
         message: "Some error on chat Room Data",
+        error: err,
       });
     }
     return res.status(200).send(result[0]);
@@ -46,6 +47,7 @@ exports.lastSeen = (req, res) => {
       // console.log("Error :" ,err);
       return res.status(500).send({
         message: " Some error on last Seen",
+        error: err,
       });
     }
     // console.log("Booking_Data : " , result);
@@ -74,10 +76,10 @@ exports.messageSend = (req, res) => {
 
   sql.query(sqlQuery, messageData, (err, result) => {
     if (err) {
-      console.log("error : ", err);
+      // console.log("error : ", err);
       return res.status(500).send({
-        message:
-          "Some error occurred while creating the Message" || err.message,
+        message: "Some error occurred while creating the Message",
+        error: err,
       });
     } else {
       // console.log(result.insertId);

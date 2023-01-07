@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const userServices = require("../../services/user.services.js");
 
 exports.getOtp = (req, res, next) => {
-  console.log(req.body);
+  // console.log(req.body);
   var body = req.body;
   userServices.createOtp(body, (error, hashCode, otp) => {
     if (error) {
@@ -25,7 +25,7 @@ exports.verifyOtp = (req, res, next) => {
   userServices.verifyOtp(req.body, (error, result) => {
     if (error) {
       // console.log("Invalid OTP");
-      return res.status(403).send({ error: "Invalid OTP" });
+      return res.status(403).send({ error: "Invalid OTP", error: error });
     } else {
       // console.log("Success OTP");
       return res.status(200).send({
@@ -39,19 +39,19 @@ exports.verifyOtp = (req, res, next) => {
 // check user registration
 exports.checkUser = (req, res, next) => {
   const body = req.body;
-  console.log(body);
+  // console.log(body);
   if (!body.uid)
     res.status(400).send({
       message: "User Id is not given for check!",
     });
 
   const loginId = body.uid;
-  console.log(loginId);
+  // console.log(loginId);
   sql.query(
     `select * from users where log_id='${loginId}';`,
     async (err, result) => {
       if (err) {
-        console.log(err);
+        // console.log(err);
         return res.status(409).send({
           message: `Some error occurred check User while sql query :`,
           error: err,
@@ -70,23 +70,25 @@ exports.checkUser = (req, res, next) => {
 
 // for User Register
 exports.signUp = (req, res, next) => {
-  console.log("sing up", req.body);
+  // console.log("sing up", req.body);
   const error = validationResult(req);
 
   if (!error.isEmpty()) {
-    console.log("sing up error", error);
-    return res.status(503).send(error);
+    // console.log("sing up error", error);
+    return res
+      .status(503)
+      .send({ message: "error showing then user validation", error: error });
   }
   const body = req.body;
 
   if (body.login_with === "phone" && body.u_phone === "") {
-    console.log("If you have Login with Phone than can't be empty");
+    // console.log("If you have Login with Phone than can't be empty");
     return res.status(503).send({
       error: "If you have Login with Phone than can't be empty",
     });
   }
   if (body.login_with === "email" && body.u_email === "") {
-    console.log("If you have Login with Email than can't be empty");
+    // console.log("If you have Login with Email than can't be empty");
     return res.status(503).send({
       error: "If you have Login with Email than can't be empty",
     });
@@ -94,13 +96,13 @@ exports.signUp = (req, res, next) => {
 
   const loginId = body.login_with === "phone" ? body.u_phone : body.u_email;
 
-  console.log(loginId);
+  // console.log(loginId);
   sql.query(
     `select * from users where u_phone = '${loginId}' or u_email='${loginId}';`,
     async (err, result) => {
       if (err) {
         return res.status(409).send({
-          message: `Some error occurred signUp while sql query :`,
+          message: `Some error occurred signUp while sql query`,
           error: err,
         });
       }
@@ -110,7 +112,7 @@ exports.signUp = (req, res, next) => {
         });
       } else {
         // const salt = await bcrypt.genSalt(10);
-        console.log("result", result);
+        // console.log("result", result);
         bcrypt.hash(body.log_pass, 10, (err, hashResult) => {
           if (err) {
             return res.status(500).send({
@@ -118,7 +120,7 @@ exports.signUp = (req, res, next) => {
             });
           } else {
             // console.log("hashCod");
-            console.log("hashCode : ", hashResult);
+            // console.log("hashCode : ", hashResult);
             const userData = [
               loginId,
               hashResult,
@@ -138,11 +140,11 @@ exports.signUp = (req, res, next) => {
 
             sql.query(sqlQuery, userData, (err, result) => {
               if (err) {
-                console.log("error : ", err);
+                // console.log("error : ", err);
                 return res.status(500).send({
                   message:
-                    "Some error occurred while creating the SignUp :" ||
-                    err.message,
+                    "Some error occurred while creating the SignUp :",
+                    error : err,
                 });
               } else {
                 // console.log(result.insertId);
@@ -162,7 +164,7 @@ exports.logIn = (req, res, next) => {
   // console.log(req.body);
   const error = validationResult(req);
   if (!error.isEmpty()) {
-    console.log(error);
+    // console.log(error);
     return res.status(503).send(error);
   }
 
@@ -172,15 +174,17 @@ exports.logIn = (req, res, next) => {
 
   sql.query(sqlQuery, (err, result) => {
     if (err) {
-      console.log("error : ", err);
+      // console.log("error : ", err);
       return res.status(500).send({
-        message: "Some error occurred while Login :" || err.message,
+        message: "Some error occurred while Login",
+        error: err,
       });
     }
 
     if (result.length == 0) {
       return res.status(404).send({
-        message: "Login Id is not registered" || err.message,
+        message: "Login Id is not registered",
+        result: result,
       });
     } else {
       // if user is login with google is already authorized( don't check password)
@@ -190,7 +194,7 @@ exports.logIn = (req, res, next) => {
 
       bcrypt.compare(body.password, result[0]["log_pass"], (err, result) => {
         if (err) {
-          console.log("has ero: ", err);
+          // console.log("has ero: ", err);
           return res.status(503).send({ "hash compare error": err });
         } else if (result === true) {
           return res.status(200).send({ message: "Login Successfully" });
@@ -208,7 +212,6 @@ exports.updateUserProfile = (req, res, next) => {
 
   const loginId = body.login_with === "phone" ? body.u_phone : body.u_email;
 
-  
   const userData = [
     body.u_name,
     body.u_about || null,
@@ -228,10 +231,10 @@ exports.updateUserProfile = (req, res, next) => {
 
   sql.query(sqlQuery, userData, (err, result) => {
     if (err) {
-      console.log("error : ", err);
+      // console.log("error : ", err);
       return res.status(500).send({
-        message:
-          "Some error occurred while creating the SignUp :" || err.message,
+        message: "Some error occurred while creating the SignUp",
+        error: err,
       });
     } else {
       return res.status(200).send({ id: result.insertId, date: result });

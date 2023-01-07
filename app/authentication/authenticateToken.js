@@ -24,6 +24,6 @@ exports.verifyToken = (req, res, next) => {
       next();
     });
   } catch (error) {
-    return send("Error catch", error.message);
+    return send("Error catch", error);
   }
 }

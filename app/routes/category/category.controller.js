@@ -7,9 +7,10 @@ exports.getMain = (req, res) => {
 
   sql.query(query, (err, result) => {
     if (err) {
-      console.log("Error :" ,err);
+      // console.log("Error :" ,err);
       return res.status(500).send({
         message: " Some error on find all Main Category data",
+        error: err
       });
     }
     // console.log("Main Categories : " , result);
@@ -35,6 +36,7 @@ exports.getSub = (req, res) => {
       // console.log("Error :" ,err);
       return res.status(500).send({
         message: " Some error on find all Sub Category data",
+        error: err
       });
     }
     return res.status(200).send(result);

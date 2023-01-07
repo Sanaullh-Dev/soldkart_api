@@ -34,13 +34,14 @@ exports.postCreate = (req, res) => {
 
   sql.query(sqlQuery, postData, (err, result) => {
     if (err) {
-      console.log("error : ", err);
+      // console.log("error : ", err);
       return res.status(500).send({
         message:
-          "Some error occurred while creating the Ads Post" || err.message,
+          "Some error occurred while creating the Ads Post",
+          error: err,
       });
     } else {
-      console.log(result.insertId);
+      // console.log(result.insertId);
       return res.status(200).send({ id: result.insertId, date: result });
     }
   });
@@ -57,9 +58,10 @@ exports.recentAds = (req, res) => {
 
     sql.query(query, (err, result) => {
       if (err) {
-        console.log("Error :", err);
+        // console.log("Error :", err);
         return res.status(500).send({
           message: " Some error on find all recent Ads Post selected data",
+          error: err,
         });
       }
       // console.log(result[0]);
@@ -77,15 +79,16 @@ exports.getPostDetails = (req, res) => {
   } else {
     // let query = "SELECT * FROM adspost order by p_date desc LIMIT 20";
     let query = `CALL get_postDetail('${body.uid}' ,${body.pid});`;
-    console.log(query);
+    // console.log(query);
     sql.query(query, (err, result) => {
       if (err) {
-        console.log("Error :", err);
+        // console.log("Error :", err);
         return res.status(500).send({
           message: " Some error on get Post Details data",
+          error: err,
         });
       }
-      console.log(result[0]);
+      // console.log(result[0]);
       return res.status(200).send(result[0][0]);
     });
   }
@@ -95,7 +98,7 @@ exports.getPostDetails = (req, res) => {
 exports.relatedAds = (req, res) => {
   var body = req.body;
 
-  console.log(body);
+  // console.log(body);
 
   if (!body.mainId) {
     return res.status(400).send({
@@ -116,6 +119,7 @@ exports.relatedAds = (req, res) => {
       // console.log("Error :" ,err);
       return res.status(500).send({
         message: " Some error on related ads",
+        error: err,
       });
     }
     return res.status(200).send(result[0]);
@@ -139,6 +143,7 @@ exports.getFavoriteList = (req, res) => {
       // console.log("Error :" ,err);
       return res.status(500).send({
         message: " Some error on get Favorite List ads",
+        error: err,
       });
     }
     return res.status(200).send(result[0]);
@@ -159,9 +164,10 @@ exports.getMySalesAds = (req, res) => {
 
   sql.query(query, (err, result) => {
     if (err) {
-      console.log("Error :", err);
+      // console.log("Error :", err);
       return res.status(500).send({
         message: " Some error on get My Sales Ads",
+        error: err,
       });
     }
     return res.status(200).send(result[0]);
@@ -188,9 +194,10 @@ exports.deleteMySalesAds = (req, res) => {
 
   sql.query(query, (err, result) => {
     if (err) {
-      console.log("Error :", err);
+      // console.log("Error :", err);
       return res.status(500).send({
         message: " Some error on delete My Sales Ads",
+        error: err,
       });
     }
     return res
@@ -201,7 +208,7 @@ exports.deleteMySalesAds = (req, res) => {
 
 // Find all Data function - OK
 exports.filterAds = (req, res) => {
-  console.log(req.query);
+  // console.log(req.query);
 
   if (!req.query.location) {
     return res.status(400).send({
@@ -216,7 +223,7 @@ exports.filterAds = (req, res) => {
   var maxAmt = req.query.maxAmt;
   var keyword = req.query.keyword;
 
-  console.log(req.query);
+  // console.log(req.query);
 
   let query = `SELECT * FROM adspost WHERE p_location='${location}'`;
 
@@ -261,6 +268,7 @@ exports.filterAds = (req, res) => {
       // console.log("Error :" ,err);
       return res.status(500).send({
         message: " Some error on filter Ads",
+        error: err,
       });
     }
     return res.status(200).send(result);
@@ -285,6 +293,7 @@ exports.keywordSearch = (req, res) => {
       // console.log("Error :" ,err);
       return res.status(500).send({
         message: "Some error on find with keyword Ads Post",
+        error: err,
       });
     }
     // console.log("Booking_Data : " , result);
@@ -313,6 +322,7 @@ exports.keywordWiseList = (req, res) => {
       // console.log("Error :" ,err);
       return res.status(500).send({
         message: "Some error on find with keyword Ads Post",
+        error: err
       });
     }
     // console.log("Booking_Data : " , result);
@@ -322,11 +332,11 @@ exports.keywordWiseList = (req, res) => {
 
 // User post reaction on Ads
 exports.userAction = (req, res, next) => {
-  console.log(req.body);
+  // console.log(req.body);
   const error = validationResult(req);
 
   if (!error.isEmpty()) {
-    console.log("userAction error", error);
+    // console.log("userAction error", error);
     return res.status(503).send(error);
   }
   const body = req.body;
@@ -336,7 +346,7 @@ exports.userAction = (req, res, next) => {
     async (err, result) => {
       if (err) {
         return res.status(409).send({
-          message: `Some error occurred user Action while sql query :`,
+          message: `Some error occurred user Action while sql query`,
           error: err,
         });
       }
@@ -347,7 +357,7 @@ exports.userAction = (req, res, next) => {
         
         sql.query(sqlQuery, (err, result) => {
           if (err) {
-            console.log("error : ", err);
+            // console.log("error : ", err);
             return res.status(500).send({
               message: "Some error occurred while update on post_reaction :",
               Error: err,
@@ -369,11 +379,11 @@ exports.userAction = (req, res, next) => {
         let sqlQuery = `INSERT INTO post_reaction(${column}) VALUES(?,?,?,?)`;
         sql.query(sqlQuery, postReactionData, (err, result) => {
           if (err) {
-            console.log("error : ", err);
+            // console.log("error : ", err);
             return res.status(500).send({
               message:
-                "Some error occurred while insert post reaction :" ||
-                err.message,
+                "Some error occurred while insert post reaction :",
+                error : err,
             });
           } else {
             // console.log(result.insertId);
@@ -390,7 +400,7 @@ exports.favoritesUpdate = (req, res, next) => {
   const error = validationResult(req);
 
   if (!error.isEmpty()) {
-    console.log("userAction error", error);
+    // console.log("userAction error", error);
     return res.status(503).send(error);
   }
   const body = req.body;
@@ -400,7 +410,7 @@ exports.favoritesUpdate = (req, res, next) => {
 
   sql.query(sqlQuery, (err, result) => {
     if (err) {
-      console.log("error : ", err);
+      // console.log("error : ", err);
       return res.status(500).send({
         message: "Some error occurred while update on post_reaction :",
         Error: err,
@@ -422,9 +432,10 @@ exports.userProfileAds = (req, res) => {
 
     sql.query(query, (err, result) => {
       if (err) {
-        console.log("Error :", err);
+        // console.log("Error :", err);
         return res.status(500).send({
           message: " Some error on user Profile Ads ",
+          error: err,
         });
       }
       // console.log(result[0]);
