@@ -4,14 +4,13 @@ const bcrypt = require("bcrypt");
 const userServices = require("../../services/user.services.js");
 
 exports.getOtp = (req, res, next) => {
-  // console.log(req.body);
+  
   var body = req.body;
-  userServices.createOtp(body, (error, hashCode, otp) => {
+  userServices.createOtp(body, (error, result, hashCode) => {
     if (error) {
       return next(error);
     } else {
-      console.log("OTP : ", otp);
-      console.log("hashCode : ", hashCode);
+      console.log(`result : ${result}`);
       // for testing purpose without otp send
       return res.status(200).send({
         message: "Success Sent OTP",
@@ -142,9 +141,8 @@ exports.signUp = (req, res, next) => {
               if (err) {
                 // console.log("error : ", err);
                 return res.status(500).send({
-                  message:
-                    "Some error occurred while creating the SignUp :",
-                    error : err,
+                  message: "Some error occurred while creating the SignUp :",
+                  error: err,
                 });
               } else {
                 // console.log(result.insertId);
